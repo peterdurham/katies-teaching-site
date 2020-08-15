@@ -1,22 +1,25 @@
-/**
- * Bio component that queries for data
- * with Gatsby's useStaticQuery component
- *
- * See: https://www.gatsbyjs.org/docs/use-static-query/
- */
-
 import React from "react"
+import styled from "styled-components"
 import { useStaticQuery, graphql } from "gatsby"
 import Image from "gatsby-image"
 
-import { rhythm } from "../utils/typography"
+const BioStyles = styled.div`
+  margin: 100px 0;
+  display: grid;
+  grid-template-columns: 140px 920px;
+  grid-column-gap: 40px;
+
+  #profile-details p:not(:first-child) {
+    margin-top: 10px;
+  }
+`
 
 const Bio = () => {
   const data = useStaticQuery(graphql`
     query BioQuery {
       avatar: file(absolutePath: { regex: "/profile-pic.jpg/" }) {
         childImageSharp {
-          fixed(width: 50, height: 50) {
+          fixed(width: 300, height: 300) {
             ...GatsbyImageSharpFixed
           }
         }
@@ -37,33 +40,34 @@ const Bio = () => {
 
   const { author, social } = data.site.siteMetadata
   return (
-    <div
-      style={{
-        display: `flex`,
-        marginBottom: rhythm(2.5),
-      }}
-    >
+    <BioStyles>
       <Image
-        fixed={data.avatar.childImageSharp.fixed}
-        alt={author.name}
-        style={{
-          marginRight: rhythm(1 / 2),
-          marginBottom: 0,
-          minWidth: 50,
-          borderRadius: `100%`,
-        }}
         imgStyle={{
           borderRadius: `50%`,
         }}
+        fixed={data.avatar.childImageSharp.fixed}
+        alt={author.name}
       />
-      <p>
-        Written by <strong>{author.name}</strong> {author.summary}
-        {` `}
-        <a href={`https://twitter.com/${social.twitter}`}>
-          You should follow her on Instagram
-        </a>
-      </p>
-    </div>
+      <div id="profile-details">
+        <p>
+          I strive to create an innovative, challenging curriculum that meets
+          the needs of all types of learners. It is always my goal to give
+          students that “just right” challenge and spark curiosity. I enjoy
+          enhancing each child's learning experience with creative instruction
+          and interactive exploration. Overall, I love making learning fun and
+          enjoyable for every child!
+        </p>
+        <p>
+          Written by <strong>{author.name}</strong> {author.summary}
+          {` `}
+        </p>
+        <p>
+          <a href={`https://twitter.com/${social.twitter}`}>
+            You should follow her on Instagram
+          </a>
+        </p>
+      </div>
+    </BioStyles>
   )
 }
 

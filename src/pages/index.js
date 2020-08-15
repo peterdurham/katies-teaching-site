@@ -1,50 +1,76 @@
 import React from "react"
 import { Link, graphql } from "gatsby"
+import styled from "styled-components"
 
 import Bio from "../components/bio"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
-import { rhythm } from "../utils/typography"
 
-import "../components/styles.css"
+import PostCard from "../components/postCard"
+import ProductCard from "../components/productCard"
 
-const colors = ["#46A6F7", "#EF2A7A", "#89C640", "#FC921F"]
+const PageContainer = styled.div`
+  width: 1100px;
+  margin: 0 auto;
+`
+
+const SectionHeader = styled.h2`
+  margin: 20px 0;
+  text-align: center;
+`
+
+const CardsContainer = styled.section`
+  margin: 40px auto 100px auto;
+  display: grid;
+  grid-template-columns: repeat(3, 340px);
+  grid-column-gap: 40px;
+`
 
 const BlogIndex = ({ data, location }) => {
   const siteTitle = data.site.siteMetadata.title
-  const posts = data.allMarkdownRemark.edges
+  const allMarkdown = data.allMarkdownRemark.edges
 
+  const posts = allMarkdown.filter(
+    ({ node }) => node.frontmatter.templateKey === "post"
+  )
+  const products = allMarkdown.filter(
+    ({ node }) => node.frontmatter.templateKey === "product"
+  )
+  console.log(posts)
   return (
     <Layout location={location} title={siteTitle}>
       <SEO title="All posts" />
-
-      {posts.map(({ node }) => {
-        const title = node.frontmatter.title || node.fields.slug
-        return (
-          <article key={node.fields.slug}>
-            <header>
-              <h3
-                style={{
-                  marginBottom: rhythm(1 / 4),
-                }}
-              >
-                <Link style={{ boxShadow: `none` }} to={node.fields.slug}>
-                  {title}
-                </Link>
-              </h3>
-              <small>{node.frontmatter.date}</small>
-            </header>
-            <section>
-              <p
-                dangerouslySetInnerHTML={{
-                  __html: node.frontmatter.description || node.excerpt,
-                }}
+      <PageContainer>
+        <SectionHeader>Blog Posts</SectionHeader>
+        <CardsContainer>
+          {posts.map(({ node }) => {
+            const title = node.frontmatter.title || node.fields.slug
+            return (
+              <PostCard
+                key={node.fields.slug}
+                slug={node.fields.slug}
+                title={node.frontmatter.title}
+                image={node.frontmatter.featuredImage}
               />
-            </section>
-          </article>
-        )
-      })}
-      <Bio />
+            )
+          })}
+        </CardsContainer>
+        <SectionHeader>Products</SectionHeader>
+        <CardsContainer>
+          {products.map(({ node }) => {
+            const title = node.frontmatter.title || node.fields.slug
+            return (
+              <ProductCard
+                key={node.fields.slug}
+                slug={node.fields.slug}
+                title={node.frontmatter.title}
+                image={node.frontmatter.featuredImage}
+              />
+            )
+          })}
+        </CardsContainer>
+        <Bio />
+      </PageContainer>
     </Layout>
   )
 }
@@ -66,9 +92,17 @@ export const pageQuery = graphql`
             slug
           }
           frontmatter {
+            templateKey
             date(formatString: "MMMM DD, YYYY")
             title
             description
+            featuredImage {
+              childImageSharp {
+                fluid(maxWidth: 600) {
+                  ...GatsbyImageSharpFluid
+                }
+              }
+            }
           }
         }
       }
