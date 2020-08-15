@@ -6,6 +6,8 @@ import Layout from "../components/layout"
 import SEO from "../components/seo"
 import { rhythm } from "../utils/typography"
 
+import "../components/styles.css"
+
 const colors = ["#46A6F7", "#EF2A7A", "#89C640", "#FC921F"]
 
 const BlogIndex = ({ data, location }) => {
@@ -15,7 +17,7 @@ const BlogIndex = ({ data, location }) => {
   return (
     <Layout location={location} title={siteTitle}>
       <SEO title="All posts" />
-      <Bio />
+
       {posts.map(({ node }) => {
         const title = node.frontmatter.title || node.fields.slug
         return (
@@ -42,6 +44,7 @@ const BlogIndex = ({ data, location }) => {
           </article>
         )
       })}
+      <Bio />
     </Layout>
   )
 }
